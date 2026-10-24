@@ -1,0 +1,29 @@
+﻿services:
+  postgres:
+    image: postgres:17
+    container_name: jungle-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: wagering
+      POSTGRES_USER: wagering
+      POSTGRES_PASSWORD: wagering_dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wagering -d wagering"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  elasticmq:
+    image: softwaremill/elasticmq-native:latest
+    container_name: jungle-elasticmq
+    restart: unless-stopped
+    ports:
+      - "9324:9324"
+      - "9325:9325"
+
+volumes:
+  postgres_data:
