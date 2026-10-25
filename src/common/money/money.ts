@@ -1,3 +1,4 @@
+
 export class Money {
   private constructor(private readonly cents: bigint) {}
 
@@ -33,6 +34,10 @@ export class Money {
     return new Money(this.cents - other.cents);
   }
 
+  add(other: Money): Money {
+    return new Money(this.cents + other.cents);
+  }
+
   toDecimal(): string {
     const integerPart = this.cents / 100n;
     const decimalPart = String(this.cents % 100n).padStart(2, '0');
@@ -44,3 +49,4 @@ export class Money {
     return this.cents < other.cents;
   }
 }
+

@@ -2,7 +2,7 @@
 import { Module } from '@nestjs/common';
 import { SQSClient } from '@aws-sdk/client-sqs';
 import { SqsService } from './sqs.service.js';
-
+import { InboxModule } from '../inbox/inbox.module.js';
 @Module({
   providers: [
     {
