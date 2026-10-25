@@ -1,132 +1,151 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Jungle Wagering Processor
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A backend application built with NestJS and TypeScript as part of the Jungle Gaming backend technical challenge.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+The project focuses on backend development concepts such as financial transaction processing, PostgreSQL persistence, message queues, and reliable event handling.
 
-## Description
+## Technologies
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+* Node.js
+* TypeScript
+* NestJS
+* PostgreSQL 17
+* TypeORM
+* AWS SDK for JavaScript (SQS client)
+* ElasticMQ for local SQS-compatible messaging
+* Vitest
+* Docker Compose
 
-## Project setup
+## Architecture Overview
 
-```bash
-$ bun install
-```
+The application includes components for:
 
-## Compile and run the project
+* **Bets:** bet-related business operations.
+* **Wallets:** wallet management and ledger entries.
+* **Outbox:** persistence of events for reliable asynchronous processing.
+* **Inbox:** tracking of consumed messages to help prevent duplicate processing.
+* **SQS:** integration with an SQS-compatible messaging service.
 
-```bash
-# development
-$ bun run start
+The application uses PostgreSQL for persistence and ElasticMQ for local message-queue development.
 
-# watch mode
-$ bun run start:dev
+## Prerequisites
 
-# production mode
-$ bun run start:prod
-```
+Install the following tools before running the application:
 
-## Run tests
+* Node.js
+* Bun
+* Docker Desktop with Docker Compose
+
+## Getting Started
+
+### 1. Install dependencies
 
 ```bash
-# unit tests
-$ bun run test
-
-# e2e tests
-$ bun run test:e2e
-
-# test coverage
-$ bun run test:cov
+bun install
 ```
 
-## Deployment
+### 2. Start the local infrastructure
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Start PostgreSQL and ElasticMQ using Docker Compose:
 
 ```bash
-$ bun install -g @nestjs/mau
-$ mau deploy
+docker compose up -d
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The default PostgreSQL configuration is:
 
-## Observability
+| Setting  | Value          |
+| -------- | -------------- |
+| Host     | `127.0.0.1`    |
+| Port     | `5433`         |
+| Database | `wagering`     |
+| Username | `wagering`     |
+| Password | `wagering_dev` |
 
-In production applications, observability is essential for understanding how your system behaves, detecting issues early, and maintaining reliable performance.
+These credentials are intended for local development only.
 
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep visibility into your system with minimal setup:
+ElasticMQ is exposed on port `9324`, with its secondary interface on port `9325`.
 
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies so your team can react quickly.
+### 3. Run database migrations
 
-To add it to this project, run this and approve the code it prints at [observe.nestjs.com/link](https://observe.nestjs.com/link) - signing up for free if you have no account:
+Apply the database migrations:
 
 ```bash
-$ npx @nestjs/observe link
+bun run migration:run
 ```
 
-It installs `@nestjs/observe`, wires it into `AppModule` and `main.ts`, and writes the app key and secret into `.env`, which every `nest start` script (`start`, `start:dev`, `start:debug`) then loads. In production, set `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the environment instead.
-
-Or do it by hand:
+To revert the most recent migration:
 
 ```bash
-$ bun install @nestjs/observe
+bun run migration:revert
 ```
 
-Then follow the [setup guide](https://docs.nestjs.com/observability/sdk) - it takes a single import and an app key.
+### 4. Start the application
 
-The free plan needs no payment details and covers 300,000 events a month. You can also browse the [live demo](https://www.observe-demo.nestjs.com/dashboard) first - the whole dashboard over a busy service's data, with nothing to install.
+Run the application in development mode:
 
-## Resources
+```bash
+bun run start:dev
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+To build the application:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observe](https://observe.nestjs.com). Distributed tracing, metrics, and logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+bun run build
+```
 
-## Support
+To run the compiled application:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+bun run start:prod
+```
 
-## Stay in touch
+## Testing
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Run the automated test suite:
+
+```bash
+bun run test
+```
+
+Run tests in watch mode:
+
+```bash
+bun run test:watch
+```
+
+Run end-to-end tests:
+
+```bash
+bun run test:e2e
+```
+
+Generate test coverage:
+
+```bash
+bun run test:cov
+```
+
+## Configuration
+
+The SQS client uses the following defaults for local development:
+
+* Region: `us-east-1`
+* Endpoint: `http://localhost:9324`
+* Local access key: `local`
+* Local secret key: `local`
+
+The SQS endpoint can be overridden using the `SQS_ENDPOINT` environment variable.
+
+The database connection is configured in `typeorm.config.ts`.
+
+## Development Notes
+
+* Database schema changes are managed through TypeORM migrations.
+* Automatic schema synchronization is disabled.
+* PostgreSQL data is persisted in a Docker volume.
+* ElasticMQ provides a local SQS-compatible environment for development and testing.
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project was developed as part of a technical hiring challenge. It is not intended for production use without further validation and configuration.
